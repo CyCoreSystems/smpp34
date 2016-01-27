@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+const minEli = 10
+
 type Transceiver struct {
 	Smpp
 	eLTicker     *time.Ticker // Enquire Link ticker
@@ -49,13 +51,15 @@ func newTransceiver(host string, port int, eli int, bindParams Params, config *t
 	}
 
 	// EnquireLinks should not be less 10seconds
-	if eli < 10 {
-		eli = 10
+	if eli <= 0 {
+		return trx, nil
+	} else {
+		if eli < minEli {
+			eli = minEli
+		}
+		trx.eLDuration = eli
+		go trx.startEnquireLink(eli)
 	}
-
-	trx.eLDuration = eli
-
-	go trx.startEnquireLink(eli)
 
 	return trx, nil
 }

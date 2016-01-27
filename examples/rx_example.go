@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	smpp "github.com/CodeMonkeyKevin/smpp34"
+	smpp "github.com/XmsCoders/smpp34"
 )
 
 func main() {

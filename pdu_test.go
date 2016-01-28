@@ -2,10 +2,11 @@ package smpp34
 
 import (
 	"encoding/hex"
-	. "launchpad.net/gocheck"
 	"math/rand"
 	"testing"
 	"time"
+
+	. "gopkg.in/check.v1"
 )
 
 const (

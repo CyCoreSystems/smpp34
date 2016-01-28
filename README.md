@@ -1,6 +1,8 @@
 SMPP34
 ======
 
+![](https://travis-ci.org/XmsCoders/smpp34.svg?branch=master)
+
 Check [examples](https://github.com/CodeMonkeyKevin/smpp34/tree/master/examples) folder for usage details
 
 ##### Supported/Unsupported PDUs

@@ -3,4 +3,6 @@ language: go
 go:
 - 1.5
 
+install:
+  go get gopkg.in/check.v1
 script: go test -v  ./

@@ -2,7 +2,6 @@ package smpp34
 
 import (
 	"fmt"
-	"testing"
 
 	. "gopkg.in/check.v1"
 )
@@ -14,8 +13,6 @@ var (
 		Sequence: 3,
 	}
 )
-
-func BuildPduTest(t *testing.T) { TestingT(t) }
 
 type BuildPduSuite struct{}
 

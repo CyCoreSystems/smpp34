@@ -25,7 +25,7 @@ const (
 	querySmRespPdu     = "0000001a80000003000000000000000168656c6c6f0000010000"
 )
 
-func PduTest(t *testing.T) { TestingT(t) }
+func TestMain(t *testing.T) { TestingT(t) }
 
 type PduSuite struct{}
 

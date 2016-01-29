@@ -25,19 +25,19 @@ const (
 	querySmRespPdu     = "0000001a80000003000000000000000168656c6c6f0000010000"
 )
 
-func Test(t *testing.T) { TestingT(t) }
+func PduTest(t *testing.T) { TestingT(t) }
 
-type MySuite struct{}
+type PduSuite struct{}
 
-var _ = Suite(&MySuite{})
+var _ = Suite(&PduSuite{})
 
-func (s *MySuite) Test_PduCmdIdErrors(c *C) {
+func (s *PduSuite) Test_PduCmdIdErrors(c *C) {
 	data, _ := hex.DecodeString("00000010900000060000000000000003")
 	_, err := ParsePdu(data)
 	c.Check(err.Error(), Equals, "Unknown PDU Type. ID:2415919110")
 }
 
-func (s *MySuite) Test_PduLenErrors(c *C) {
+func (s *PduSuite) Test_PduLenErrors(c *C) {
 	data, _ := hex.DecodeString("000000100000000600000000000000")
 	_, err := ParsePdu(data)
 	c.Check(err.Error(), Equals, "Invalid PDU length")
@@ -47,7 +47,7 @@ func (s *MySuite) Test_PduLenErrors(c *C) {
 	c.Check(err.Error(), Equals, "Invalid PDU length")
 }
 
-func (s *MySuite) Test_BindPdu(c *C) {
+func (s *PduSuite) Test_BindPdu(c *C) {
 	data, _ := hex.DecodeString(bindPdu)
 	p, err := ParsePdu(data)
 
@@ -68,7 +68,7 @@ func (s *MySuite) Test_BindPdu(c *C) {
 	c.Check(p.GetField("UNKNOWN_STR"), IsNil)
 }
 
-func (s *MySuite) Test_BindRespPdu(c *C) {
+func (s *PduSuite) Test_BindRespPdu(c *C) {
 	data, _ := hex.DecodeString(bindRespPdu)
 	p, err := ParsePdu(data)
 
@@ -82,7 +82,7 @@ func (s *MySuite) Test_BindRespPdu(c *C) {
 	c.Check(p.SetTLVField(0x210, 5, []byte{0x1, 0x2}), Equals, TLVFieldLenErr)
 }
 
-func (s *MySuite) Test_DeliverSmPdu(c *C) {
+func (s *PduSuite) Test_DeliverSmPdu(c *C) {
 	data, _ := hex.DecodeString(deliverSmPdu)
 	p, err := ParsePdu(data)
 
@@ -96,7 +96,7 @@ func (s *MySuite) Test_DeliverSmPdu(c *C) {
 	c.Check(hex.EncodeToString(p.Writer()), DeepEquals, "0000002f00000005000000005222728000000174657374320001017465737400000001000001000000057465737431")
 }
 
-func (s *MySuite) Test_DeliverSmRespPdu(c *C) {
+func (s *PduSuite) Test_DeliverSmRespPdu(c *C) {
 	data, _ := hex.DecodeString(deliverSmRespPdu)
 	p, err := ParsePdu(data)
 
@@ -105,7 +105,7 @@ func (s *MySuite) Test_DeliverSmRespPdu(c *C) {
 	c.Check(p.Writer(), DeepEquals, data)
 }
 
-func (s *MySuite) Test_EnquireLinkPdu(c *C) {
+func (s *PduSuite) Test_EnquireLinkPdu(c *C) {
 	data, _ := hex.DecodeString(enquireLinkPdu)
 	p, err := ParsePdu(data)
 
@@ -114,7 +114,7 @@ func (s *MySuite) Test_EnquireLinkPdu(c *C) {
 	c.Check(p.Writer(), DeepEquals, data)
 }
 
-func (s *MySuite) Test_EnquireLinkRespPdu(c *C) {
+func (s *PduSuite) Test_EnquireLinkRespPdu(c *C) {
 	data, _ := hex.DecodeString(enquireLinkRespPdu)
 	p, err := ParsePdu(data)
 
@@ -123,7 +123,7 @@ func (s *MySuite) Test_EnquireLinkRespPdu(c *C) {
 	c.Check(p.Writer(), DeepEquals, data)
 }
 
-func (s *MySuite) Test_GenericNackPdu(c *C) {
+func (s *PduSuite) Test_GenericNackPdu(c *C) {
 	data, _ := hex.DecodeString(genericNackPdu)
 	p, err := ParsePdu(data)
 
@@ -132,7 +132,7 @@ func (s *MySuite) Test_GenericNackPdu(c *C) {
 	c.Check(p.Writer(), DeepEquals, data)
 }
 
-func (s *MySuite) Test_SubmitSmPdu(c *C) {
+func (s *PduSuite) Test_SubmitSmPdu(c *C) {
 	data, _ := hex.DecodeString(submitSmPdu)
 	p, err := ParsePdu(data)
 
@@ -147,7 +147,7 @@ func (s *MySuite) Test_SubmitSmPdu(c *C) {
 	c.Check(hex.EncodeToString(p.Writer()), DeepEquals, "0000002f00000004000000000000000200000074657374000000746573743200000000000000000000057465737431")
 }
 
-func (s *MySuite) Test_SubmitSmRespPdu(c *C) {
+func (s *PduSuite) Test_SubmitSmRespPdu(c *C) {
 	data, _ := hex.DecodeString(submitSmRespPdu)
 	p, err := ParsePdu(data)
 
@@ -157,7 +157,7 @@ func (s *MySuite) Test_SubmitSmRespPdu(c *C) {
 	c.Check(p.GetField(MESSAGE_ID).String(), Equals, "100946e4-5a8f-485d-8e64-edf9aa377a22")
 }
 
-func (s *MySuite) Test_UnbindPdu(c *C) {
+func (s *PduSuite) Test_UnbindPdu(c *C) {
 	data, _ := hex.DecodeString(unbindPdu)
 	p, err := ParsePdu(data)
 
@@ -165,7 +165,7 @@ func (s *MySuite) Test_UnbindPdu(c *C) {
 	c.Check(p.GetHeader(), DeepEquals, NewPduHeader(0x10, UNBIND, ESME_ROK, uint32(3)))
 }
 
-func (s *MySuite) Test_UnbindRespPdu(c *C) {
+func (s *PduSuite) Test_UnbindRespPdu(c *C) {
 	data, _ := hex.DecodeString(unbindRespPdu)
 	p, err := ParsePdu(data)
 
@@ -173,7 +173,7 @@ func (s *MySuite) Test_UnbindRespPdu(c *C) {
 	c.Check(p.GetHeader(), DeepEquals, NewPduHeader(0x10, UNBIND_RESP, ESME_ROK, uint32(3)))
 }
 
-func (s *MySuite) Test_QuerySmPdu(c *C) {
+func (s *PduSuite) Test_QuerySmPdu(c *C) {
 	data, _ := hex.DecodeString(querySmPdu)
 	p, err := ParsePdu(data)
 
@@ -186,7 +186,7 @@ func (s *MySuite) Test_QuerySmPdu(c *C) {
 	c.Check(p.Writer(), DeepEquals, data)
 }
 
-func (s *MySuite) Test_QuerySmRespPdu(c *C) {
+func (s *PduSuite) Test_QuerySmRespPdu(c *C) {
 	data, _ := hex.DecodeString(querySmRespPdu)
 	p, err := ParsePdu(data)
 
@@ -197,7 +197,7 @@ func (s *MySuite) Test_QuerySmRespPdu(c *C) {
 	c.Check(p.Writer(), DeepEquals, data)
 }
 
-func (s *MySuite) BenchmarkPduParsing(c *C) {
+func (s *PduSuite) BenchmarkPduParsing(c *C) {
 	c.StopTimer()
 	pdus := []string{
 		bindPdu,

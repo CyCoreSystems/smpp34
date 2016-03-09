@@ -66,6 +66,9 @@ func newTransceiver(host string, port int, eli int, bindParams Params, config *t
 
 func (t *Transceiver) Bind(system_id string, password string, params *Params) error {
 	pdu, err := t.Smpp.Bind(BIND_TRANSCEIVER, system_id, password, params)
+	if err != nil {
+		return err
+	}
 	if err := t.Write(pdu); err != nil {
 		return err
 	}

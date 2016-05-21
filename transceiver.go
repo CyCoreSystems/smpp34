@@ -3,6 +3,8 @@ package smpp34
 import (
 	"crypto/tls"
 	"time"
+
+	"gopkg.in/inconshreveable/log15.v2"
 )
 
 const minEli = 10
@@ -13,25 +15,27 @@ type Transceiver struct {
 	eLCheckTimer *time.Timer  // Enquire Link Check timer
 	eLDuration   int          // Enquire Link Duration
 	Err          error        // Errors generated in go routines that lead to conn close
+
+	log log15.Logger // Output logger
 }
 
 // NewTransceiver creates and initializes a new Transceiver.
 // The eli parameter is for EnquireLink interval, in seconds.
-func NewTransceiver(host string, port int, eli int, bindParams Params) (*Transceiver, error) {
-	return newTransceiver(host, port, eli, bindParams, nil)
+func NewTransceiver(host string, port int, eli int, bindParams Params, log log15.Logger) (*Transceiver, error) {
+	return newTransceiver(host, port, eli, bindParams, log, nil)
 }
 
 // NewTransceiver creates and initializes a new Transceiver using TLS.
 // The eli parameter is for EnquireLink interval, in seconds.
-func NewTransceiverTLS(host string, port int, eli int, bindParams Params, config *tls.Config) (*Transceiver, error) {
+func NewTransceiverTLS(host string, port int, eli int, bindParams Params, log log15.Logger, config *tls.Config) (*Transceiver, error) {
 	if config == nil {
 		config = &tls.Config{}
 	}
-	return newTransceiver(host, port, eli, bindParams, config)
+	return newTransceiver(host, port, eli, bindParams, log, config)
 }
 
 // eli = EnquireLink Interval in Seconds
-func newTransceiver(host string, port int, eli int, bindParams Params, config *tls.Config) (*Transceiver, error) {
+func newTransceiver(host string, port int, eli int, bindParams Params, log log15.Logger, config *tls.Config) (*Transceiver, error) {
 	trx := &Transceiver{}
 	var err error
 	if config == nil {
@@ -43,6 +47,7 @@ func newTransceiver(host string, port int, eli int, bindParams Params, config *t
 		return nil, err
 	}
 
+	trx.log = log
 	sysId := bindParams[SYSTEM_ID].(string)
 	pass := bindParams[PASSWORD].(string)
 
@@ -177,8 +182,10 @@ func (t *Transceiver) startEnquireLink(eli int) {
 		select {
 		case <-t.eLTicker.C:
 
+			t.log.Debug("Sending enquire link")
 			p, _ := t.EnquireLink()
 			if err := t.Write(p); err != nil {
+				t.log.Debug("Got error sending enquire link", "error", err)
 				t.Err = SmppELWriteErr
 				t.Close()
 				return
@@ -186,6 +193,7 @@ func (t *Transceiver) startEnquireLink(eli int) {
 
 			t.eLCheckTimer.Reset(d)
 		case <-t.eLCheckTimer.C:
+			t.log.Debug("Got timeout in sending of enquire link")
 			t.Err = SmppELRespErr
 			t.Close()
 			return

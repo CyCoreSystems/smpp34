@@ -182,7 +182,7 @@ func (t *Transceiver) startEnquireLink(eli int) {
 		select {
 		case <-t.eLTicker.C:
 
-			t.log.Debug("Sending enquire link")
+			t.log.Debug("Sending enquire link", "trace", true)
 			p, _ := t.EnquireLink()
 			if err := t.Write(p); err != nil {
 				t.log.Debug("Got error sending enquire link", "error", err)
